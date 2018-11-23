@@ -1,4 +1,4 @@
-import { gameManager } from './index';
+import { gameManager } from '../index';
 
 export default class MapManager {
     constructor() {
@@ -12,17 +12,11 @@ export default class MapManager {
         this.imgLoadCount = 0; // количество загруженных изображений
         this.imgLoaded = false; // все изображения загружены
         this.jsonLoaded = false; // json описание загружено
-        // видимая область с координатами левого верхнего угла
-        this.view = {
-            x: 0,
-            y: 0,
-            w: 1000,
-            h: 1000,
-        };
     }
 
 
     parseMap(tilesJSON) {
+        console.log(tilesJSON);
         this.mapData = tilesJSON; // разобрать JSON
         this.xCount = this.mapData.width; // сохранение ширины
         this.yCount = this.mapData.height; // сохранение высоты
@@ -89,16 +83,6 @@ export default class MapManager {
     }
 
 
-    isVisible(x, y, width, height) { // не рисуем за пределами видимой зоны
-        return !(x + width < this.view.x ||
-            y + height < this.view.y ||
-            x > this.view.x + this.view.w ||
-            y > this.view.y + this.view.h);
-
-         // если прямоугольники пересекаются - true
-    }
-
-
     /*
     * отрисовка карты в контексте
     */
@@ -131,14 +115,6 @@ export default class MapManager {
                     */
                     let pX = (i % this.xCount) * this.tSize.x;
                     let pY = Math.floor(i / this.xCount) * this.tSize.y;
-
-                    // не рисуем за пределами видимой зоны
-                    if (!this.isVisible(pX, pY, this.tSize.y)) continue;
-
-                    //сдвигаем видимую зону
-                    pX -= this.view.x;
-                    pY -= this.view.y;
-
 
                     ctx.drawImage(
                         tile.img,
@@ -184,14 +160,14 @@ export default class MapManager {
                             * Значение type в визуальном интерфейсе
                             * вводится дизайнером игры
                             */
-                            const obj = Object.create(gameManager.factory[e.type]);
+                            const obj = gameManager.factory[e.type]();
                             obj.name = e.name;
                             obj.pos_x = e.x;
                             obj.pos_y = e.y;
                             obj.size_x = e.width;
                             obj.size_y = e.height;
                             gameManager.entities.push(obj);
-                            if (obj.name === 'player') gameManager.initPlayer(obj);
+                            if (obj.name === 'pacman') gameManager.initPlayer(obj);
                         } catch (ex) { // если объект с типом e.type не описан разработчиком
                             console.log(`Error while creating: [${e.gid}] ${e.type}, ${ex}`);
                         }
@@ -216,22 +192,4 @@ export default class MapManager {
         return this.tLayer.data[idx];
     }
 
-
-    /*
-    * Предназначена для центрирования области mapManager.view
-    * относительно положения игрока(x,y)
-    */
-    centerAt(x, y) {// центрирование view
-        // центрирование по горизонтали
-        if (x < this.view.w / 2) this.view.x = 0;
-        else if (x > this.mapSize.x - this.view.w / 2)
-            this.view.x = this.mapSize.x - this.view.w;
-        else this.view.x = x - this.view.w / 2;
-
-        // центрирование по вертикали
-        if (y < this.view.h / 2) this.view.y = 0;
-        else if (y > this.mapSize.y - this.view.h / 2)
-            this.view.y = this.mapSize.y - this.view.h;
-        else this.view.y = y - this.view.h / 2;
-    }
 }
