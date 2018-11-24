@@ -22,15 +22,15 @@ ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 gameManager.factory['Pacman'] = () =>
     new Pacman({
-        pos_x: 35,
-        pos_y: 35,
+        pos_x: 32,
+        pos_y: 32,
         size_x: 32,
         size_y: 32,
         lifetime: 100,
         move_x: 0,
         move_y: 0,
         speed: 8,
-        direction: 'up',
+        direction: 'right',
     });
 
 mapManager.parseMap(map1);

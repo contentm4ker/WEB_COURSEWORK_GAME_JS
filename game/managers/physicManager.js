@@ -33,9 +33,8 @@ export default class PhysicManager {
     }
 
     static update(obj) {
-        console.log(obj);
-        // скорости движения нулевые
         if (obj.move_x === 0 && obj.move_y === 0) {
+            eventsManager.action[obj.direction] = false;
             return 'stop';
         }
 
@@ -73,17 +72,18 @@ export default class PhysicManager {
         if (e !== null && obj.onTouchEntity) obj.onTouchEntity(e);
         if (ts !== 35 && obj.onTouchMap) obj.onTouchMap(ts);
         if (ts === 35 && e === null) {
-            //eventsManager.isContinue = true;
             obj.pos_x = newX;
             obj.pos_y = newY;
         } else {
+            eventsManager.action[obj.direction] = false;
             return 'break';
         }
-        if (obj.direction === 'up' || obj.direction === 'right')
-            eventsManager.counter += obj.speed;
-        else
-            eventsManager.counter -= obj.speed;
-        eventsManager.prev = obj.direction;
+
+        if (obj.pos_x % 32 === 0 && obj.pos_y % 32 === 0) {
+            eventsManager.action[obj.direction] = false;
+            return 'break'
+        }
+
         return 'move';
     }
 }

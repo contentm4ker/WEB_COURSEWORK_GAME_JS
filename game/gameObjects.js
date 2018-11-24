@@ -1,4 +1,4 @@
-import { spriteManager, gameManager, mapManager, eventsManager} from './index';
+import { spriteManager, gameManager, mapManager} from './index';
 import PhysicManager from './managers/physicManager';
 
 class Entity {
@@ -67,7 +67,7 @@ export class Pacman extends Entity {
 
         let ph = PhysicManager.update(this);
         //while (PhysicManager.update(this) === 'move') {}
-
+        console.log('actTT: ', ph);
 
         //PhysicManager.update(this);
     }
