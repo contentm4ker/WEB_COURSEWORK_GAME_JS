@@ -1,8 +1,11 @@
+import {eventsManager} from "../index";
+
 export default class EventsManager {
     constructor() {
         this.bind = []; // сопоставление клавиш действиям
         this.action = []; // действия
-        this.isContinue = false;
+        this.counter = 0;
+        this.prev = '';
     }
 
     setup(canvas) {
@@ -27,14 +30,21 @@ export default class EventsManager {
     }
 
     onKeyDown(event) {
-
-            this.action['up'] = false;
-            this.action['left'] = false;
-            this.action['down'] = false;
-            this.action['right'] = false;
-
         const action = this.bind[event.keyCode];
-        if (action) this.action[action] = true;
+
+        let isOpposite = false;
+        if (action === 'up' && this.prev === 'down') isOpposite = true;
+        else if (action === 'down' && this.prev === 'up') isOpposite = true;
+        else if (action === 'left' && this.prev === 'right') isOpposite = true;
+        else if (action === 'right' && this.prev === 'left') isOpposite = true;
+
+        if (this.counter%32 === 0 || isOpposite) {
+            eventsManager.action['up'] = false;
+            eventsManager.action['down'] = false;
+            eventsManager.action['left'] = false;
+            eventsManager.action['right'] = false;
+            if (action) this.action[action] = true;
+        }
     }
 
     onKeyUp(event) {

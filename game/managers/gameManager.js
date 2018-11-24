@@ -43,7 +43,6 @@ export default class GameManager {
         }
 
         // обновление информации по всем объектам на карте
-        console.log('enetetes', this.entities);
         this.entities.forEach(e => {
             try {
                 e.update();

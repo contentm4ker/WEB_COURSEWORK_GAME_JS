@@ -64,13 +64,12 @@ export class Pacman extends Entity {
         if (this.move_y === -1) this.direction = 'up';
         if (this.move_y === 1) this.direction = 'down';
 
-        /*
-        while (PhysicManager.update(this) === 'move') {}
-        if (PhysicManager.update(this) !== 'move') {
 
-        }*/
+        let ph = PhysicManager.update(this);
+        //while (PhysicManager.update(this) === 'move') {}
 
-        PhysicManager.update(this);
+
+        //PhysicManager.update(this);
     }
 
 
