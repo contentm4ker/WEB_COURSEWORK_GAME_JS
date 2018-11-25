@@ -1,7 +1,6 @@
 import { mapManager, gameManager, eventsManager } from '../index';
 
-function changeDirectionOfBot(obj) {
-    console.log(obj);
+function changeDirectionOfGhost(obj) {
     if (obj.move_x === 1 || obj.move_x === -1) {
         obj.move_x = 0;
         obj.move_y = Math.random() < 0.5 ? -1 : 1;
@@ -33,6 +32,8 @@ export default class PhysicManager {
     }
 
     static update(obj) {
+        console.log('OBJOBJ: ', obj);
+
         if (obj.move_x === 0 && obj.move_y === 0) {
             eventsManager.action[obj.direction] = false;
             return 'stop';
@@ -61,19 +62,25 @@ export default class PhysicManager {
             ts = mapManager.getTilesetIdx(newX, tsY);
         }
 
-        const e = PhysicManager.entityAtXY(obj, newX, newY);
+        let e = PhysicManager.entityAtXY(obj, newX, newY);
 
-        if (obj.constructor.name === 'Ghost') {
-            if (ts !== 35 || e !== null) {
-                changeDirectionOfBot(obj);
+        if (obj.name === 'ghost') {
+            if (ts !== 35) {
+                changeDirectionOfGhost(obj);
+                return "break";
             }
         }
 
-        if (e !== null && obj.onTouchEntity) obj.onTouchEntity(e);
+        if (e !== null && obj.onTouchEntity) {
+            obj.onTouchEntity(e);
+            e = null;
+        }
+
         if (ts !== 35 && obj.onTouchMap) obj.onTouchMap(ts);
-        if (ts === 35 && e === null) {
+        if (ts === 35 && (e === null || obj.name === 'ghost')) {
             obj.pos_x = newX;
             obj.pos_y = newY;
+            if (obj.name === 'ghost') return "move";
         } else {
             eventsManager.action[obj.direction] = false;
             return 'break';

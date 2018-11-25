@@ -1,4 +1,5 @@
 import { gameManager } from '../index';
+import {Pill} from "../gameObjects";
 
 export default class MapManager {
     constructor() {

@@ -1,4 +1,5 @@
-import {mapManager, eventsManager, gameManager} from '../index';
+import {mapManager, eventsManager, gameManager, spriteManager} from '../index';
+import {Pacman} from "../gameObjects";
 
 export default class GameManager {
     constructor() {
@@ -9,6 +10,10 @@ export default class GameManager {
         this.laterAdd = [];
         this.score = 0;
         this.finalScore = 1;
+        this.numOfTries = 3;
+        this.isGhostsAfraid = false;
+        this.isBlink = false;
+        this.doRespawn = false;
     }
 
 
@@ -23,6 +28,26 @@ export default class GameManager {
 
 
     update(ctx) {
+        if (this.doRespawn && this.numOfTries > 0) {
+            this.numOfTries--;
+            this.doRespawn = false;
+            let pacman = new Pacman({
+                pos_x: 32,
+                pos_y: 32,
+                size_x: 32,
+                size_y: 32,
+                move_x: 0,
+                move_y: 0,
+                speed: 8,
+                direction: 'right'
+            });
+            this.entities.push(pacman);
+            this.initPlayer(pacman);
+        }else if (this.doRespawn && this.numOfTries === 0)  {
+            clearInterval(this.playInterval);
+            alert('Вы проебали');
+        }
+
         if (this.player === null) return;
 
         // скорости
@@ -76,7 +101,10 @@ export default class GameManager {
         // }
         */
         mapManager.draw(ctx);
-
+        ctx.strokeStyle = '#FFFF00';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.strokeText(gameManager.numOfTries, 32, 28);
+        spriteManager.drawSprite(ctx, 'spr_lifecounter_0', 8, 8);
         this.draw(ctx);
     }
 
@@ -94,6 +122,6 @@ export default class GameManager {
 
 
     play(ctx) {
-        setInterval(() => gameManager.update(ctx), 50);
+        this.playInterval = setInterval(() => gameManager.update(ctx), 30);
     }
 }
