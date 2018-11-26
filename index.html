@@ -1,12 +1,95 @@
-<html>
+<html style="width: 100%;height: 100%">
 
 <head>
-  <title>Express</title>
+    <title>Pacman game</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body {
+            background-color: black;
+        }
+        #player, #score {
+            color: yellow;
+        }
+        .hit-the-floor {
+            color: #fff;
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 0 1px 0 #cccb12, 0 2px 0 #c3c913, 0 3px 0 #bbb527,
+            0 4px 0 #b9b429, 0 5px 0 #aaa801, 0 6px 1px rgba(255, 245, 13, 0.45),
+            0 0 5px rgba(227, 223, 8, 0.5), 0 1px 3px rgb(204, 203, 18),
+            0 3px 5px rgba(204, 203, 18, 0.2), 0 5px 10px rgba(185, 180, 41, 0.25),
+            0 10px 10px rgba(204, 203, 18, 0.2), 0 20px 20px rgba(170, 168, 1, 0.15);
+        }
+
+        .hit-the-floor {
+            text-align: center;
+        }
+    </style>
 </head>
 
-<body>
-  <div id="score">0</div>
-  <canvas></canvas>
+<body style="width: 100%;height: 100%">
+  <script>
+      function createScoreTable() {
+          document.getElementById('scoretable').innerText = '';
+          var playersAndScores = [];
+          for (let i = 0; i < localStorage.length; i++) {
+              if (localStorage.key(i) !== 'pacman.username') {
+                  let tmp = {};
+                  tmp['name'] = localStorage.key(i);
+                  tmp['score'] = Number(localStorage.getItem(localStorage.key(i)));
+                  playersAndScores.push(tmp)
+              }
+          }
+
+          playersAndScores.sort(function(a, b) {
+              return b.score - a.score;
+          });
+          playersAndScores.unshift(null);
+
+          document.getElementById('table');
+          let newTable = document.createElement('table');
+          let newTitle = newTable.insertRow(0);
+          newTitle.insertCell(0).innerHTML = 'Игрок';
+          newTitle.insertCell(1).innerHTML = 'Количество очков';
+
+
+          for (let y = 1; y < localStorage.length; y++) {
+              let newRow = newTable.insertRow(y);
+              for (let x = 0; x < 2 ; x++) {
+                  let newCell = newRow.insertCell(x);
+
+                  if (x === 0) {
+                      newCell.innerHTML = playersAndScores[y].name;
+                  } else {
+                      newCell.innerHTML = playersAndScores[y].score;
+                  }
+              }
+          }
+          newTable.className = 'w3-table-all w3-hoverable w3-card-4 w3-centered';
+          document.getElementById('scoretable').appendChild(newTable);
+          document.getElementById('modal1').style.display='block';
+      }
+  </script>
+  <div id="modal1" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+      <header class="w3-container w3-black">
+        <span class="w3-button w3-display-topright" onclick="document.getElementById('modal1').style.display='none'">
+          &times;
+        </span>
+        <h2 class="w3-center">Таблица рекордов</h2>
+      </header>
+      <div id="scoretable"></div>
+    </div>
+  </div>
+
+  <div class="w3-display-topmiddle">
+      <button onclick="createScoreTable();" class="w3-btn w3-padding w3-indigo w3-center w3-hover-yellow">Таблица рекордов</button>
+      <span id="player" class="hit-the-floor"></span>
+      <span id="score" class="hit-the-floor">0</span>
+      <button id="nextlvl-btn" class="w3-btn w3-padding w3-indigo w3-center w3-hover-yellow" disabled>Следующий уровень</button>
+  </div>
+  <canvas class="w3-display-middle"></canvas>
+  <button onclick="location.reload()" id="restart-btn" class="w3-btn w3-padding w3-indigo w3-center w3-hover-yellow w3-display-bottommiddle">Рестарт</button>
   <script src="/javascripts/index.js"></script>
 </body>
 

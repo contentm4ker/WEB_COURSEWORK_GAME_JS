@@ -60,7 +60,7 @@ export class Ghost extends Entity {
     }
 
     onTouchEntity(obj) {
-        if (obj.name === 'pacman' && !gameManager.isGhostsAfraid) {
+        if (obj.name === 'pacman' && !gameManager.isGhostsAfraid && !obj.isInvulnerable) {
             obj.kill();
         }
     }
@@ -81,6 +81,7 @@ export class Pacman extends Entity {
         this.direction = direction;
         this.state = 0;
         this.counterForState = 0;
+        this.isInvulnerable = false;
     }
 
 
@@ -106,24 +107,26 @@ export class Pacman extends Entity {
 
 
     onTouchEntity(obj) {
-        if (obj.name === 'pill') {
-            gameManager.score += 10;
-            obj.kill();
-        }
-        if (obj.name === 'ghost' && !gameManager.isGhostsAfraid) {
-            this.kill();
-        } else if (obj.name === 'ghost' && gameManager.isGhostsAfraid) {
-            if (!obj.isEaten) {
-                obj.isEaten = true;
-                gameManager.score += 200;
+        if (!this.isInvulnerable) {
+            if (obj.name === 'pill') {
+                gameManager.score += 10;
+                obj.kill();
             }
-        }
-        if (obj.name === 'cherry') {
-            gameManager.score += 200;
-            obj.kill();
-        }
+            if (obj.name === 'ghost' && !gameManager.isGhostsAfraid) {
+                this.kill();
+            } else if (obj.name === 'ghost' && gameManager.isGhostsAfraid) {
+                if (!obj.isEaten) {
+                    obj.isEaten = true;
+                    gameManager.score += 200;
+                }
+            }
+            if (obj.name === 'cherry') {
+                gameManager.score += 200;
+                obj.kill();
+            }
 
-        document.getElementById('score').innerText = gameManager.score;
+            document.getElementById('score').innerText = gameManager.score;
+        }
     }
 
 

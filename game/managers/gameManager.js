@@ -7,13 +7,16 @@ export default class GameManager {
         this.entities = []; // объекты на карте (не убитые)
         this.player = null;
         this.laterKill = [];
-        this.laterAdd = [];
         this.score = 0;
-        this.finalScore = 1;
+        this.finalScore = 0;
         this.numOfTries = 3;
         this.isGhostsAfraid = false;
         this.isBlink = false;
         this.doRespawn = false;
+        this.gameOver = false;
+        this.currentLevel = 1;
+        this.onlyOnce = true; // для блока условия при прохождении карты
+        this.maxLevelsNum = 2;
     }
 
 
@@ -44,11 +47,10 @@ export default class GameManager {
             this.entities.push(pacman);
             this.initPlayer(pacman);
         }else if (this.doRespawn && this.numOfTries === 0)  {
-            clearInterval(this.playInterval);
-            alert('Вы проебали');
+            this.gameOver = true;
         }
 
-        if (this.player === null) return;
+        if (this.player === null && !this.gameOver) return;
 
         // скорости
         this.player.move_x = 0;
@@ -68,7 +70,11 @@ export default class GameManager {
         }
 
         // обновление информации по всем объектам на карте
+        let isVictory = true;
         this.entities.forEach(e => {
+            if (e.name === 'pill') {
+                isVictory = false;
+            }
             try {
                 e.update();
             } catch (ex) {}
@@ -85,43 +91,63 @@ export default class GameManager {
         // очистка массива
         if (this.laterKill.length) this.laterKill.length = 0;
 
-        /*
-        if (this.entities.indexOf(this.player) === -1) {
-            soundManager.play('./sound/loose.mp3');
-            savePlayer();
-            endGame();
-            return;
-        }
-
-        const score = document.querySelector('.score');
-        score.innerHTML = this.score;
-        // if (+score.innerHTML === this.finalScore){
-        //   nextLevel();
-        //   return;
-        // }
-        */
         mapManager.draw(ctx);
         ctx.strokeStyle = '#FFFF00';
         ctx.font = 'bold 32px sans-serif';
         ctx.strokeText(gameManager.numOfTries, 32, 28);
         spriteManager.drawSprite(ctx, 'spr_lifecounter_0', 8, 8);
+        if (this.gameOver) {
+            this.updateLocalStorage();
+            ctx.font = 'bold 100px sans-serif';
+            ctx.strokeText('GAME OVER', 100, 430);
+        } else if (isVictory) {
+            if (this.onlyOnce) {
+                if (this.currentLevel < this.maxLevelsNum)
+                {
+                    document.getElementById('nextlvl-btn').disabled = false;
+                    this.currentLevel++;
+                }
+            }
+            this.onlyOnce = false;
+            this.player.isInvulnerable = true;
+            this.updateLocalStorage();
+            ctx.font = 'bold 100px sans-serif';
+            ctx.strokeText('VICTORY', 180, 400);
+        }
         this.draw(ctx);
     }
-
 
     draw(ctx) {
         for (let e = 0; e < this.entities.length; e++)
             this.entities[e].draw(ctx, this.player);
     }
 
+    clearManager() {
+        clearInterval(this.playInterval);
+        this.finalScore = this.score;
+        this.entities = []; // объекты на карте (не убитые)
+        this.player = null;
+        this.laterKill = [];
+        this.score = 0;
+        this.numOfTries = 3;
+        this.isGhostsAfraid = false;
+        this.isBlink = false;
+        this.doRespawn = false;
+        this.gameOver = false;
+    }
 
-    clear() {
-        console.log(this.entities);
-        this.entities.forEach(item => clearInterval(item.timer));
+    play(ctx) {
+        document.getElementById('player').innerText = localStorage['pacman.username'] + ': ';
+        this.playInterval = setInterval(() => gameManager.update(ctx), 30);
     }
 
 
-    play(ctx) {
-        this.playInterval = setInterval(() => gameManager.update(ctx), 30);
+    updateLocalStorage() {
+        if (localStorage.hasOwnProperty(localStorage['pacman.username'])) {
+            if (localStorage[localStorage['pacman.username']] < this.score + this.finalScore)
+                localStorage[localStorage['pacman.username']] = this.score + this.finalScore;
+        } else {
+            localStorage[localStorage['pacman.username']] = this.score + this.finalScore;
+        }
     }
 }

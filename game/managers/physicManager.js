@@ -32,8 +32,6 @@ export default class PhysicManager {
     }
 
     static update(obj) {
-        console.log('OBJOBJ: ', obj);
-
         if (obj.move_x === 0 && obj.move_y === 0) {
             eventsManager.action[obj.direction] = false;
             return 'stop';

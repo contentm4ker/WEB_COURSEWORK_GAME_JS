@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authorization</title>
+</head>
+<body>
+<script>
+    function store() {
+        localStorage["pacman.username"]
+            = document.getElementById("username").value;
+    }
+</script>
+<form action="/game" method="get">
+    <label>
+        Введите имя:<br>
+        <input id="username" placeholder="Имя пользователя"><br>
+    </label>
+    <input id="b1" onclick="store();" type="submit" value="Ввод">
+</form>
+</body>
+</html>
