@@ -1,4 +1,4 @@
-import {mapManager, eventsManager, gameManager, spriteManager} from '../index';
+import {mapManager, eventsManager, gameManager, spriteManager, soundManager} from '../index';
 import {Pacman} from "../gameObjects";
 
 export default class GameManager {
@@ -46,6 +46,7 @@ export default class GameManager {
             });
             this.entities.push(pacman);
             this.initPlayer(pacman);
+            soundManager.play('/sounds/pacman_death.wav');
         }else if (this.doRespawn && this.numOfTries === 0)  {
             this.gameOver = true;
         }
@@ -107,6 +108,7 @@ export default class GameManager {
                     document.getElementById('nextlvl-btn').disabled = false;
                     this.currentLevel++;
                 }
+                soundManager.play('/sounds/pacman_death.wav');
             }
             this.onlyOnce = false;
             this.player.isInvulnerable = true;

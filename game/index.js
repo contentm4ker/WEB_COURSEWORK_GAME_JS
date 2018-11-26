@@ -2,6 +2,7 @@ import MapManager from './managers/mapManager';
 import SpriteManager from './managers/spriteManager';
 import GameManager from './managers/gameManager';
 import EventsManager from './managers/eventsManager';
+import SoundManager from './managers/soundManager';
 import map1 from './maps/map1.json';
 import map2 from './maps/map2.json';
 
@@ -21,7 +22,16 @@ export const spriteManager = new SpriteManager();
 export let gameManager = new GameManager();
 export let mapManager;
 export const eventsManager = new EventsManager();
+export let soundManager = new SoundManager();
 
+soundManager.init();
+soundManager.loadArray([
+    '/sounds/pacman_beginning.wav',
+    '/sounds/pacman_death.wav',
+    '/sounds/pacman_eatfruit.wav',
+    '/sounds/pacman_eatghost.wav'
+]);
+soundManager.play('/sounds/pacman_beginning.wav');
 
 gameManager.factory['Pacman'] = () =>
     new Pacman({

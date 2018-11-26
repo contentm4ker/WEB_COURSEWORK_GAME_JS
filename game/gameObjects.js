@@ -1,4 +1,4 @@
-import { spriteManager, gameManager, mapManager} from './index';
+import { spriteManager, gameManager, soundManager} from './index';
 import PhysicManager from './managers/physicManager';
 
 class Entity {
@@ -118,11 +118,13 @@ export class Pacman extends Entity {
                 if (!obj.isEaten) {
                     obj.isEaten = true;
                     gameManager.score += 200;
+                    soundManager.play('/sounds/pacman_eatghost.wav');
                 }
             }
             if (obj.name === 'cherry') {
                 gameManager.score += 200;
                 obj.kill();
+                soundManager.play('/sounds/pacman_eatfruit.wav');
             }
 
             document.getElementById('score').innerText = gameManager.score;
